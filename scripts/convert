@@ -1,0 +1,29 @@
+#!/bin/bash
+
+DIR="/home/jakeware/wind_fields/mit/"
+MATDIR="${DIR}mat/default_profile/"
+HDFDIR="${DIR}hdf/"
+
+# check for hdf directory
+if [ -d "${HDFDIR}" ]; then
+        echo "Removing existing files."
+	rm -r "${HDFDIR}"
+	echo "Creating directory."
+	mkdir "${HDFDIR}"
+else
+	echo "No existing files."
+	echo "Creating directory."
+        mkdir "${HDFDIR}"
+fi
+
+echo "Converting Files..."
+for folder in $( ls ${MATDIR} ); do
+        SOURCE="${MATDIR}${folder}/"
+	echo "${SOURCE}"
+	../pod-build/bin/flow-mat2hdf5 -q -p ${SOURCE}
+
+	mkdir ${HDFDIR}${folder}
+	mv ${SOURCE}/*.h5 ${HDFDIR}${folder}
+done
+
+echo "Finished"
